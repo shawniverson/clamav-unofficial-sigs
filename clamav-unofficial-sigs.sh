@@ -1051,7 +1051,7 @@ function make_signature_database_from_ascii_file() {
 
 
     xshok_pretty_echo_and_log "Signature database file created at: ${path_file}"
-    if $clamscan_bin --quiet -d "$path_file" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+    if $clamscan_bin --quiet -d "$path_file" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
 
       xshok_pretty_echo_and_log "Clamscan reports database integrity tested good."
 
@@ -2554,7 +2554,7 @@ if [ -n "$ham_dir" ] && [ -d "$work_dir" ] && [ ! -d "$test_dir" ] ; then
       [[ -e ${db_file} ]] || break # Handle the case of no files
       $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "$db_file" > "$db_file-tmp"
       mv -f "$db_file-tmp" "$db_file"
-      if $clamscan_bin --quiet -d "$db_file" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+      if $clamscan_bin --quiet -d "$db_file" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
         if $rsync_bin -pcqt "$db_file" "$clam_dbs" ; then
           perms chown -f "${clam_user}:${clam_group}" "${clam_dbs}/${db_file}"
           if [ "$selinux_fixes" == "yes" ] ; then
@@ -2868,7 +2868,7 @@ if [ "$sanesecurity_enabled" == "yes" ] ; then
                   if [ "$ret" -eq 0 ] ; then
                     db_ext="${db_file#*.}"
                     if [ -z "$ham_dir" ] || [ "$db_ext" != "ndb" ] ; then
-                      if $clamscan_bin --quiet -d "${work_dir_sanesecurity}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                      if $clamscan_bin --quiet -d "${work_dir_sanesecurity}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                         xshok_pretty_echo_and_log "Clamscan reports Sanesecurity ${db_file} database integrity tested good"
                         true
                       else
@@ -2899,7 +2899,7 @@ if [ "$sanesecurity_enabled" == "yes" ] ; then
                       mv -f "${work_dir_work_configs}/whitelist.hex-tmp" "${work_dir_work_configs}/whitelist.hex"
                       $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" > "${test_dir}/${db_file}-tmp"
                       mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
-                      if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                      if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                         xshok_pretty_echo_and_log "Clamscan reports Sanesecurity ${db_file} database integrity tested good"
                         true
                       else
@@ -3010,7 +3010,7 @@ if [ "$securiteinfo_enabled" == "yes" ] ; then
 
                 xshok_pretty_echo_and_log "Testing updated SecuriteInfo database file: ${db_file}"
                 if [ -z "$ham_dir" ] || [ "$db_ext" != "ndb" ] ; then
-                  if $clamscan_bin --quiet -d "${work_dir_securiteinfo}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                  if $clamscan_bin --quiet -d "${work_dir_securiteinfo}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                     xshok_pretty_echo_and_log "Clamscan reports SecuriteInfo ${db_file} database integrity tested good"
                     true
                   else
@@ -3039,7 +3039,7 @@ if [ "$securiteinfo_enabled" == "yes" ] ; then
                   $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >> "${work_dir_work_configs}/whitelist.hex"
                   $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" > "${test_dir}/${db_file}-tmp"
                   mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
-                  if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                  if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                     xshok_pretty_echo_and_log "Clamscan reports SecuriteInfo ${db_file} database integrity tested good"
                     true
                   else
@@ -3172,7 +3172,7 @@ if [ "$linuxmalwaredetect_enabled" == "yes" ] ; then
 
                 xshok_pretty_echo_and_log "Testing updated LinuxMalwareDetect database file: ${db_file}"
                 if [ -z "$ham_dir" ] || [ "$db_ext" != "ndb" ] ; then
-                  if $clamscan_bin --quiet -d "${work_dir_linuxmalwaredetect}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                  if $clamscan_bin --quiet -d "${work_dir_linuxmalwaredetect}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                     xshok_pretty_echo_and_log "Clamscan reports LinuxMalwareDetect ${db_file} database integrity tested good"
                     true
                   else
@@ -3199,7 +3199,7 @@ if [ "$linuxmalwaredetect_enabled" == "yes" ] ; then
                   $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >> "${work_dir_work_configs}/whitelist.hex"
                   $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" > "${test_dir}/${db_file}-tmp"
                   mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
-                  if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                  if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                     xshok_pretty_echo_and_log "Clamscan reports LinuxMalwareDetect ${db_file} database integrity tested good"
                     true
                   else
@@ -3313,7 +3313,7 @@ if [ "$malwareexpert_enabled" == "yes" ] ; then
 
                 xshok_pretty_echo_and_log "Testing updated Malware Expert database file: ${db_file}"
                 if [ -z "$ham_dir" ] || [ "$db_ext" != "ndb" ] ; then
-                  if $clamscan_bin --quiet -d "${work_dir_malwareexpert}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                  if $clamscan_bin --quiet -d "${work_dir_malwareexpert}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                     xshok_pretty_echo_and_log "Clamscan reports Malware Expert ${db_file} database integrity tested good"
                     true
                   else
@@ -3342,7 +3342,7 @@ if [ "$malwareexpert_enabled" == "yes" ] ; then
                   $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >> "${work_dir_work_configs}/whitelist.hex"
                   $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" > "${test_dir}/${db_file}-tmp"
                   mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
-                  if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                  if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                     xshok_pretty_echo_and_log "Clamscan reports Malware Expert ${db_file} database integrity tested good"
                     true
                   else
@@ -3457,7 +3457,7 @@ if [ "$malwarepatrol_enabled" == "yes" ] ; then
 
                 xshok_pretty_echo_and_log "Testing updated MalwarePatrol database file: ${malwarepatrol_db}"
                 if [ -z "$ham_dir" ] || [ "$db_ext" != "ndb" ] ; then
-                  if $clamscan_bin --quiet -d "${work_dir_malwarepatrol}/${malwarepatrol_db}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                  if $clamscan_bin --quiet -d "${work_dir_malwarepatrol}/${malwarepatrol_db}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                     xshok_pretty_echo_and_log "Clamscan reports MalwarePatrol ${malwarepatrol_db} database integrity tested good"
                     true
                   else
@@ -3486,7 +3486,7 @@ if [ "$malwarepatrol_enabled" == "yes" ] ; then
                   $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${malwarepatrol_db}" | cut -d "*" -f 2 | sort | uniq >> "${work_dir_work_configs}/whitelist.hex"
                   $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${malwarepatrol_db}" > "${test_dir}/${malwarepatrol_db}-tmp"
                   mv -f "${test_dir}/${malwarepatrol_db}-tmp" "${test_dir}/${malwarepatrol_db}"
-                  if $clamscan_bin --quiet -d "${test_dir}/${malwarepatrol_db}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                  if $clamscan_bin --quiet -d "${test_dir}/${malwarepatrol_db}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                     xshok_pretty_echo_and_log "Clamscan reports MalwarePatrol ${malwarepatrol_db} database integrity tested good"
                     true
                   else
@@ -3586,7 +3586,7 @@ if [ "$urlhaus_enabled" == "yes" ] ; then
               db_ext="${db_file#*.}"
               xshok_pretty_echo_and_log "Testing updated urlhaus database file: ${db_file}"
               if [ -z "$ham_dir" ] || [ "$db_ext" != "ndb" ] ; then
-                if $clamscan_bin --quiet -d "${work_dir_urlhaus}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                if $clamscan_bin --quiet -d "${work_dir_urlhaus}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                   xshok_pretty_echo_and_log "Clamscan reports urlhaus ${db_file} database integrity tested good"
                   true
                 else
@@ -3615,7 +3615,7 @@ if [ "$urlhaus_enabled" == "yes" ] ; then
                 $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >> "${work_dir_work_configs}/whitelist.hex"
                 $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" > "${test_dir}/${db_file}-tmp"
                 mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
-                if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                   xshok_pretty_echo_and_log "Clamscan reports urlhaus ${db_file} database integrity tested good"
                   true
                 else
@@ -3723,7 +3723,7 @@ if [ "$yararulesproject_enabled" == "yes" ] ; then
               db_ext="${db_file#*.}"
               xshok_pretty_echo_and_log "Testing updated yararulesproject database file: ${db_file}"
               if [ -z "$ham_dir" ] || [ "$db_ext" != "ndb" ] ; then
-                if $clamscan_bin --quiet -d "${work_dir_yararulesproject}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                if $clamscan_bin --quiet -d "${work_dir_yararulesproject}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                   xshok_pretty_echo_and_log "Clamscan reports yararulesproject ${db_file} database integrity tested good"
                   true
                 else
@@ -3752,7 +3752,7 @@ if [ "$yararulesproject_enabled" == "yes" ] ; then
                 $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >> "${work_dir_work_configs}/whitelist.hex"
                 $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" > "${test_dir}/${db_file}-tmp"
                 mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
-                if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                   xshok_pretty_echo_and_log "Clamscan reports yararulesproject ${db_file} database integrity tested good"
                   true
                 else
@@ -3881,7 +3881,7 @@ if [ "$additional_enabled" == "yes" ] ; then
               db_ext="${db_file#*.}"
               xshok_pretty_echo_and_log "Testing updated additional database file: ${db_file}"
               if [ -z "$ham_dir" ] || [ "$db_ext" != "ndb" ] ; then
-                if $clamscan_bin --quiet -d "${work_dir_add}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                if $clamscan_bin --quiet -d "${work_dir_add}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                   xshok_pretty_echo_and_log "Clamscan reports additional ${db_file} database integrity tested good"
                   true
                 else
@@ -3916,7 +3916,7 @@ if [ "$additional_enabled" == "yes" ] ; then
                 fi
                 $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" > "${test_dir}/${db_file}-tmp"
                 mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
-                if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10 ; then
+                if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" >/dev/null 2>&1 ; then
                   xshok_pretty_echo_and_log "Clamscan reports additional ${db_file} database integrity tested good"
                   true
                 else
