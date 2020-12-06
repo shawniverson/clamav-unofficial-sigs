@@ -14,8 +14,9 @@ if [ -e "/var/lib/clamav/sanesecurity.ftm" ] ; then
 	rm -f /var/lib/clamav/sanesecurity.ftm
 fi
 
-echo "running script as root"
-sudo bash /usr/sbin/clamav-unofficial-sigs
+echo "running script verbose and force_wget"
+cp -f .t/tests/user_wget.conf /etc/clamav-unofficial-sigs/user.conf
+bash /usr/sbin/clamav-unofficial-sigs --verbose
 if [ "$?" -eq "0" ] ; then
 	echo .. OK
 else
@@ -23,8 +24,18 @@ else
   exit 1
 fi
 
-echo "running script as clamav"
-sudo -u clamav  [ -x /usr/sbin/clamav-unofficial-sigs ] && bash /usr/sbin/clamav-unofficial-sigs --force
+echo "running script verbose default curl"
+cp -f .t/tests/user.conf /etc/clamav-unofficial-sigs/user.conf
+bash /usr/sbin/clamav-unofficial-sigs --verbose
+if [ "$?" -eq "0" ] ; then
+	echo .. OK
+else
+ 	echo .. ERROR
+  exit 1
+fi
+
+echo "running script as clamav and silence"
+sudo -u clamav  [ -x /usr/sbin/clamav-unofficial-sigs ] && bash /usr/sbin/clamav-unofficial-sigs --force --silence
 if [ "$?" -eq "0" ] ; then
 	echo .. OK
 else
@@ -51,7 +62,7 @@ if [ "$?" -eq "0" ] ; then
 	fi
 else
  	echo .. ERROR
-  exit 1
+    exit 1
 fi
 
 echo "check logrotate file generation"
@@ -61,11 +72,11 @@ if [ "$?" -eq "0" ] ; then
 		echo .. OK
 	else
 		echo .. ERROR
-  	exit 1
+  	    exit 1
 	fi
 else
  	echo .. ERROR
-  exit 1
+    exit 1
 fi
 
 echo "check man file generation"
@@ -75,11 +86,11 @@ if [ "$?" -eq "0" ] ; then
 		echo .. OK
 	else
 		echo .. ERROR
-  	exit 1
+  	     exit 1
 	fi
 else
  	echo .. ERROR
-  exit 1
+    exit 1
 fi
 
 echo "check database integrity test"
@@ -107,5 +118,86 @@ if [ "$?" -eq "0" ] ; then
 	echo .. OK
 else
  	echo .. ERROR
-  exit 1
+    exit 1
+fi
+echo "===== HIGH /var/lib/clamav/ ====="
+ls -laFh /var/lib/clamav/
+echo "================"
+
+echo "running script verbose with LOW ratings"
+cp -f .t/tests/user_low.conf /etc/clamav-unofficial-sigs/user.conf
+bash /usr/sbin/clamav-unofficial-sigs --verbose
+if [ "$?" -eq "0" ] ; then
+	echo .. OK
+else
+ 	echo .. ERROR
+    exit 1
+fi
+echo "===== LOW /var/lib/clamav/ ====="
+ls -laFh /var/lib/clamav/
+echo "================"
+
+echo "Was /var/lib/clamav-unofficial-sigs/dbs-ss/jurlbl.ndb removed ?"
+if [ ! -e "/var/lib/clamav-unofficial-sigs/dbs-ss/jurlbl.ndb" ] ; then
+    echo .. OK
+else
+    echo .. ERROR
+    exit 1
+fi
+echo "Was /var/lib/clamav/phish.ndb removed ?"
+if [ ! -e "/var/lib/clamav/phish.ndb" ] ; then
+    echo .. OK
+else
+    echo .. ERROR
+    exit 1
+fi
+
+echo "running script verbose with malware expert databases"
+cp -f .t/tests/user_malwareexpert.conf /etc/clamav-unofficial-sigs/user.conf
+bash /usr/sbin/clamav-unofficial-sigs --verbose
+if [ "$?" -eq "0" ] ; then
+	echo .. OK
+else
+ 	echo .. ERROR
+    exit 1
+fi
+echo "===== MALWAREEXPERT /var/lib/clamav/ ====="
+ls -laFh /var/lib/clamav/
+echo "================"
+
+echo "Was /var/lib/clamav-unofficial-sigs/dbs-ss/jurlbl.ndb removed ?"
+if [ ! -e "/var/lib/clamav-unofficial-sigs/dbs-ss/jurlbl.ndb" ] ; then
+    echo .. OK
+else
+    echo .. ERROR
+    exit 1
+fi
+
+echo "Was /var/lib/clamav/malware.expert.hdb added ?"
+if [ -e "/var/lib/clamav/malware.expert.hdb" ] ; then
+    echo .. OK
+else
+    echo .. ERROR
+    exit 1
+fi
+echo "Was /var/lib/clamav/malware.expert.fp added ?"
+if [ -e "/var/lib/clamav/malware.expert.fp" ] ; then
+    echo .. OK
+else
+    echo .. ERROR
+    exit 1
+fi
+echo "Was /var/lib/clamav/malware.expert.ldb added ?"
+if [ -e "/var/lib/clamav/malware.expert.ldb" ] ; then
+    echo .. OK
+else
+    echo .. ERROR
+    exit 1
+fi
+echo "Was /var/lib/clamav/malware.expert.ndb added ?"
+if [ -e "/var/lib/clamav/malware.expert.ndb" ] ; then
+    echo .. OK
+else
+    echo .. ERROR
+    exit 1
 fi
